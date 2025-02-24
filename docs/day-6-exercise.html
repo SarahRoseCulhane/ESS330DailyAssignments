@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Sarah Culhane">
 
-<title>ESS330DailyAssignments</title>
+<title>Ecosystem Science and Sustainability 330</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,17 +58,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="ESS330DailyAssignments_files/libs/clipboard/clipboard.min.js"></script>
-<script src="ESS330DailyAssignments_files/libs/quarto-html/quarto.js"></script>
-<script src="ESS330DailyAssignments_files/libs/quarto-html/popper.min.js"></script>
-<script src="ESS330DailyAssignments_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="ESS330DailyAssignments_files/libs/quarto-html/anchor.min.js"></script>
-<link href="ESS330DailyAssignments_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="ESS330DailyAssignments_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="ESS330DailyAssignments_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="ESS330DailyAssignments_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="ESS330DailyAssignments_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="day-6-exercise_files/libs/clipboard/clipboard.min.js"></script>
+<script src="day-6-exercise_files/libs/quarto-html/quarto.js"></script>
+<script src="day-6-exercise_files/libs/quarto-html/popper.min.js"></script>
+<script src="day-6-exercise_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="day-6-exercise_files/libs/quarto-html/anchor.min.js"></script>
+<link href="day-6-exercise_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="day-6-exercise_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="day-6-exercise_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="day-6-exercise_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="day-6-exercise_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -79,13 +109,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">ESS330DailyAssignments</h1>
+<h1 class="title">Ecosystem Science and Sustainability 330</h1>
+<p class="subtitle lead">Quantitative Reasoning for Ecosystem Science</p>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sarah Culhane </p>
+          </div>
+  </div>
     
   
     
@@ -96,13 +133,143 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="covid-19-data" class="level2">
+<h2 class="anchored" data-anchor-id="covid-19-data">COVID-19 Data</h2>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<p>We are going to practice some data wrangling skills using a real-world dataset about COVID cases curated and maintained by the New York Times. The data has been used to create reports and data visualizations like <a href="https://www.nytimes.com/interactive/2020/us/coronavirus-spread.html?referringSource=articleShare">this</a>, and are archived on a GitHub repo <a href="https://github.com/nytimes/covid-19-data">here</a>. Looking at the README in this repository we read:</p>
+<blockquote class="blockquote">
+<p>“We are providing two sets of data with cumulative counts of coronavirus cases and deaths: one with our most current numbers for each geography and another with historical data showing the tally for each day for each geography … the historical files are the final counts at the end of each day … The historical and live data are released in three files, one for each of these geographic levels: U.S., states and counties. A smaller file with only the most recent 30 days of data is also available”</p>
+</blockquote>
+<p>For this lab we will use the historic, recent, country level data which is stored as an updating CSV at this URL:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>raw.githubusercontent.com<span class="sc">/</span>nytimes<span class="sc">/</span>covid<span class="dv">-19</span><span class="sc">-</span>data<span class="sc">/</span>master<span class="sc">/</span>us<span class="sc">-</span>counties<span class="sc">-</span>recent.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="start" class="level3">
+<h3 class="anchored" data-anchor-id="start">Start</h3>
+<p>I will get you started this week, in the following code chunk, I am attaching the tidyverse package; saving the NY-Times URL as a value called “url”; and I am reading that URL into an object called <code>covid</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">=</span> <span class="st">'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties-recent.csv'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>covid <span class="ot">=</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covid, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code># A tibble: 5 × 6
+  date       county  state   fips  cases deaths
+  &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 2023-02-22 Autauga Alabama 01001 19732    230
+2 2023-02-22 Baldwin Alabama 01003 69641    724
+3 2023-02-22 Barbour Alabama 01005  7451    112
+4 2023-02-22 Bibb    Alabama 01007  8067    109
+5 2023-02-22 Blount  Alabama 01009 18616    261</code></pre>
+</div>
+</div>
+<p>Hint: You can print the top X rows of a <code>data.frame</code> with <code>slice</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slice</span>(covid, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>to print the top 5 columns of the raw covid <code>object</code></p>
+</section>
+</section>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1:</h2>
+<p>Use <code>dplyr</code> verbs to create a data.frame of the <strong>5</strong> counties with the most current cases. Remember, the cases and deaths are cumulative, so you only need to deal with the data for the most current (<code>max</code>) date.</p>
+<p>(<strong>Hint:</strong> <code>filter</code>, <code>arrange</code>, <code>slice</code>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>top_5_countries <span class="ot">&lt;-</span> covid <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cases)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_5_countries)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  date       county        state      fips    cases deaths
+  &lt;date&gt;     &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+1 2023-03-23 Los Angeles   California 06037 3723182  35960
+2 2023-03-23 New York City New York   &lt;NA&gt;  3252967  45123
+3 2023-03-23 Miami-Dade    Florida    12086 1547142  12324
+4 2023-03-23 Cook          Illinois   17031 1541156  15884
+5 2023-03-23 Maricopa      Arizona    04013 1533874  18877</code></pre>
+</div>
+</div>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2:</h2>
+<p>Use <code>dplyr</code> verbs to create a data.frame of the <strong>5</strong> states with the <em>most</em> cases current cases.</p>
+<p>(<strong>Hint:</strong> <code>filter</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>slice</code>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>top_5_states <span class="ot">&lt;-</span> covid <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">%&gt;%</span>             </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state) <span class="sc">%&gt;%</span>                         </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_cases =</span> <span class="fu">sum</span>(cases, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_cases)) <span class="sc">%&gt;%</span>              </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)                                  </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_5_states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  state      total_cases
+  &lt;chr&gt;            &lt;dbl&gt;
+1 California    12169158
+2 Texas          8447233
+3 Florida        7542869
+4 New York       6805271
+5 Illinois       4107931</code></pre>
+</div>
+</div>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3:</h2>
+<p>Use the <code>dplyr</code> verbs to report the <strong>5</strong> counties with the <em>worst</em> current death/cases ratio: (e.g.<span class="math inline">\(100* (deaths/cases)\)</span>)</p>
+<p>(<strong>Hint:</strong> You will need to remove those where <code>cases == 0</code> and <code>county == Unknown</code>) (<strong>Hint:</strong> <code>filter</code>, <code>mutate</code>, <code>arrange</code>, <code>slice</code>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>worst_5_counties <span class="ot">&lt;-</span>covid <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date),      </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>         cases <span class="sc">!=</span> <span class="dv">0</span>,             </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>         county <span class="sc">!=</span> <span class="st">"Unknown"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">death_rate =</span> <span class="dv">100</span> <span class="sc">*</span> (deaths <span class="sc">/</span> cases)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(death_rate)) <span class="sc">%&gt;%</span>                    </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)                                  </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(worst_5_counties)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 7
+  date       county   state    fips  cases deaths death_rate
+  &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+1 2023-03-23 Storey   Nevada   32029   197     14       7.11
+2 2023-03-23 Sabine   Texas    48403  1672     94       5.62
+3 2023-03-23 McMullen Texas    48311   196     11       5.61
+4 2023-03-23 Blaine   Nebraska 31009    76      4       5.26
+5 2023-03-23 Grant    Nebraska 31075   114      6       5.26</code></pre>
+</div>
+</div>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4:</h2>
+<p>Use the <code>dplyr</code> verbs to report the <strong>5</strong> states with the <em>worst</em> current death/case ratio.</p>
+<p>(<strong>Hint:</strong> <code>filter</code>, <code>group_by</code>, <code>summarize</code>, <code>mutate</code>, <code>arrange</code>, <code>slice</code>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>worst_5_states <span class="ot">&lt;-</span> covid <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">==</span> <span class="fu">max</span>(date)) <span class="sc">%&gt;%</span>                   </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state) <span class="sc">%&gt;%</span>                             </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_cases =</span> <span class="fu">sum</span>(cases),             </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">total_deaths =</span> <span class="fu">sum</span>(deaths)) <span class="sc">%&gt;%</span>      </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_cases <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span>                    </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">death_rate =</span> <span class="dv">100</span> <span class="sc">*</span> (total_deaths <span class="sc">/</span> total_cases)) <span class="sc">%&gt;%</span>   </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(death_rate)) <span class="sc">%&gt;%</span>                   </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)                                      </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(worst_5_states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  state        total_cases total_deaths death_rate
+  &lt;chr&gt;              &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+1 Pennsylvania     3539135        50701       1.43
+2 Michigan         3068195        42311       1.38
+3 Georgia          2984923        41056       1.38
+4 Nevada            892814        12093       1.35
+5 Arizona          2451062        33190       1.35</code></pre>
 </div>
 </div>
 </section>
