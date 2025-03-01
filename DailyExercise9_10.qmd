@@ -25,7 +25,7 @@ summary(model)
 
 ```
 
-4.   The R-squared value high and the p-value is low, suggesting that the data is statistically significant. However, the standard error is very high, suggesting that this model may not be valid.
+4.  The R-squared value high and the p-value is low, suggesting that the data is statistically significant. However, the standard error is very high, suggesting that this model may not be valid.
 
 5.  The R-squared value tells us the proportion of variation in a dependent variable that can be explained by the independent variable(s) in the model. The closer the R-squared value is to one, the better the better fit. The R-value in this model is high, telling us that it could be a good fit for the data.
 
