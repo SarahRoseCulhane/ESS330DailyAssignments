@@ -3124,7 +3124,7 @@ vertical-align: -.125em;
 <pre><code>package &#39;visdat&#39; successfully unpacked and MD5 sums checked
 
 The downloaded binary packages are in
-    C:\Users\sarah\AppData\Local\Temp\RtmpAtwEQR\downloaded_packages</code></pre>
+    C:\Users\sarah\AppData\Local\Temp\RtmpSEa2Ug\downloaded_packages</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(visdat)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3167,8 +3167,8 @@ F-statistic: 15.05 on 1 and 109 DF,  p-value: 0.0001793</code></pre>
 </div>
 </div>
 <ol start="4" type="1">
-<li><p>Yes, this model is valid. It has a significant p-value. and the</p></li>
-<li><p>The R-squared value tells us the proportion of variation in a dependent variable that can be explained by the independent variable(s) in the model. The closer the R-squared value is to one, the better the better fit. The R-value in this model is high, telling us that it could be a good fit for the data.</p></li>
+<li><p>This model has a significant p-value, telling us that the results are significant. However, the R-square is low, telling us the only 11% of fluctuation is ozone is due to solar radiation, so using this model alone is not valid.</p></li>
+<li><p>The R-squared value tells us the proportion of variation in a dependent variable that can be explained by the independent variable(s) in the model. The closer the R-squared value is to one, the better the better fit. The R-value in this model is low, telling us it is not a good fit.</p></li>
 <li><p>I used broom: : augment to predict ozone</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;broom&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3180,7 +3180,7 @@ F-statistic: 15.05 on 1 and 109 DF,  p-value: 0.0001793</code></pre>
 <pre><code>package &#39;broom&#39; successfully unpacked and MD5 sums checked
 
 The downloaded binary packages are in
-    C:\Users\sarah\AppData\Local\Temp\RtmpAtwEQR\downloaded_packages</code></pre>
+    C:\Users\sarah\AppData\Local\Temp\RtmpSEa2Ug\downloaded_packages</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
