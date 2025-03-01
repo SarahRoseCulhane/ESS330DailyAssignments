@@ -15,7 +15,7 @@
 2.  I used vis_dat to to check out the data. It does need cleaning.
 
 ```{r}
-
+options(repos = c(CRAN = "https://cran.rstudio.com"))
 install.packages("visdat")
 library(visdat)
 
