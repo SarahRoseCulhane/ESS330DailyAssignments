@@ -9,7 +9,8 @@
 ```{r}
 ?airquality
 
-install.packages("visdat")
+install.packages("visdat", repos = "https://cran.rstudio.com/")
+
 library(visdat)
 
 vis_dat(airquality)
