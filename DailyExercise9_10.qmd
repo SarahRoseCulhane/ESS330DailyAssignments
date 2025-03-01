@@ -1,0 +1,59 @@
+---
+  title: "Exercise9/10"
+  format: html
+---
+
+1.  I used the help function to find out more about the data set.
+2.  I used vis_dat to to check out the data. It does need cleaning.
+
+```{r}
+?airquality
+
+install.packages("visdat")
+library(visdat)
+
+vis_dat(airquality)
+
+```
+
+3.  I used solar radiation as the predictor for ozone because it is often associated with ozone levels. Increased sunlight can increase ozone levels because of chemical reactions.
+
+```{r}
+model <- lm(Ozone ~ Solar.R, data = airquality_clean)
+
+summary(model)
+
+```
+
+4.   The R-squared value high and the p-value is low, suggesting that the data is statistically significant. However, the standard error is very high, suggesting that this model may not be valid.
+
+5.  The R-squared value tells us the proportion of variation in a dependent variable that can be explained by the independent variable(s) in the model. The closer the R-squared value is to one, the better the better fit. The R-value in this model is high, telling us that it could be a good fit for the data.
+
+6.  I used broom: : augment to predict ozone
+
+    ```{r}
+
+    library(broom)
+
+    a <- augment(model, airquality)
+
+    ```
+
+    7.  I used ggplot to plot the actual vs predicted ozone.
+
+    ```{r}
+    library(ggplot2)
+
+    ggplot(a, aes(x = Ozone, y = .fitted)) +
+      geom_point(color = "blue") +  
+      geom_abline(intercept = 0, slope = 1, color = "red") +           the 1:1 red line
+      labs(
+        title = "Actual vs Predicted Ozone",
+        subtitle = paste("Correlation:", round(cor(a$Ozone, a$.fitted), 2)),  
+        x = "Actual Ozone",
+        y = "Predicted Ozone"
+      ) +
+      theme_minimal()
+
+
+    ```
