@@ -2,5 +2,9 @@ project:
   title: "ESS330DailyAssignments"
   output-dir: docs
 
+format: 
+  html: 
+   self-contained: TRUE
+
 editor: visual
 
