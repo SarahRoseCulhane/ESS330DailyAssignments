@@ -36,25 +36,27 @@ summary(model)
 
     library(broom)
 
-    a <- augment(model, airquality)
+    a <- augment(model, data = airquality_clean)
 
     ```
 
     7.  I used ggplot to plot the actual vs predicted ozone.
 
     ```{r}
+
     library(ggplot2)
 
+    # Plot actual vs predicted Ozone
     ggplot(a, aes(x = Ozone, y = .fitted)) +
-      geom_point(color = "blue") +  
-      geom_abline(intercept = 0, slope = 1, color = "red") +           the 1:1 red line
+      geom_point() +  # Plot the actual vs predicted points
+      geom_abline(intercept = 0, slope = 1, color = "red") +  # 1:1 line
       labs(
         title = "Actual vs Predicted Ozone",
-        subtitle = paste("Correlation:", round(cor(a$Ozone, a$.fitted), 2)),  
+        subtitle = paste("Correlation:", round(cor(a$Ozone, a$.fitted), 2)),
         x = "Actual Ozone",
         y = "Predicted Ozone"
-      ) +
-      theme_minimal()
+      )
+
 
 
     ```
