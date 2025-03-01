@@ -4,13 +4,19 @@
 ---
 
 1.  I used the help function to find out more about the data set.
+
+    ```{r}
+    data("airquality")
+
+    ?airquality
+
+    ```
+
 2.  I used vis_dat to to check out the data. It does need cleaning.
 
 ```{r}
-?airquality
 
-install.packages("visdat", repos = "https://cran.rstudio.com/")
-
+install.packages("visdat")
 library(visdat)
 
 vis_dat(airquality)
@@ -20,13 +26,14 @@ vis_dat(airquality)
 3.  I used solar radiation as the predictor for ozone because it is often associated with ozone levels. Increased sunlight can increase ozone levels because of chemical reactions.
 
 ```{r}
+airquality_clean <- na.omit(airquality)
 model <- lm(Ozone ~ Solar.R, data = airquality_clean)
 
 summary(model)
 
 ```
 
-4.  The R-squared value high and the p-value is low, suggesting that the data is statistically significant. However, the standard error is very high, suggesting that this model may not be valid.
+4.  Yes, this model is valid. It has a significant p-value. and the
 
 5.  The R-squared value tells us the proportion of variation in a dependent variable that can be explained by the independent variable(s) in the model. The closer the R-squared value is to one, the better the better fit. The R-value in this model is high, telling us that it could be a good fit for the data.
 
@@ -34,9 +41,12 @@ summary(model)
 
     ```{r}
 
+    install.packages("broom")
     library(broom)
 
     a <- augment(model, data = airquality_clean)
+
+    head(a)
 
     ```
 
@@ -46,16 +56,18 @@ summary(model)
 
     library(ggplot2)
 
-    # Plot actual vs predicted Ozone
     ggplot(a, aes(x = Ozone, y = .fitted)) +
-      geom_point() +  # Plot the actual vs predicted points
-      geom_abline(intercept = 0, slope = 1, color = "red") +  # 1:1 line
+      geom_point(color = "blue") + 
+      geom_abline(intercept = 0, slope = 1, color = "red") +  
       labs(
-        title = "Actual vs Predicted Ozone",
-        subtitle = paste("Correlation:", round(cor(a$Ozone, a$.fitted), 2)),
+        title = "Actual vs Predicted Ozone Levels",
         x = "Actual Ozone",
-        y = "Predicted Ozone"
-      )
+        y = "Predicted Ozone",
+        subtitle = paste("Correlation:", round(cor(a$Ozone, a$.fitted), 2)) 
+      ) +
+      theme_minimal()
+
+
 
 
 
