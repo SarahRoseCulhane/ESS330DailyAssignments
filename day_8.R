@@ -17,3 +17,5 @@ inner_join(df_new, covid, by = "state") |>
   geom_line() +
   facet_grid(type~region, scales = "free_y")+
   theme_bw()
+
+
