@@ -53,6 +53,15 @@ airquality <- airquality %>%
 7.  There are 61 observations from fall and 92 observations from summer but none from winter and spring.
 
     # Question 3: Data Preprocessing
+    
+```{r}
+
+airquality$Solar.R <- as.numeric(airquality$Solar.R)
+airquality$Ozone <- as.numeric(airquality$Ozone)
+
+
+```
+    
 
     ```{r}
     library(tidymodels)
@@ -74,12 +83,7 @@ airquality <-
 airquality <- 
   mutate(airquality, Ozone = if_else(is.na(Ozone), mean(Ozone, na.rm = TRUE), Ozone))
 ```
-```{r}
 
-airquality$Solar.R <- as.numeric(airquality$Solar.R)
-airquality$Ozone <- as.numeric(airquality$Ozone)
-
-```
 
     ```{r}
     prep_recipe <- prep(recipe_airquality, training = airquality)
