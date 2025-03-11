@@ -50,7 +50,7 @@ airquality <- airquality %>%
     table(airquality$season)
     ```
 
-7.  There are 52 observations from fall and 59 observations from summer but none from winter and spring.
+7.  There are 61 observations from fall and 92 observations from summer but none from winter and spring.
 
     # Question 3: Data Preprocessing
 
@@ -59,15 +59,27 @@ airquality <- airquality %>%
     recipe_airquality <- airquality %>%
       recipe(Ozone ~ Temp + Solar.R + Wind + season) %>%
       step_normalize(all_numeric_predictors()) 
-     
-
     ```
 
 8.  I used the code above to normalize the predictor variables "Temp", "solar .R", "Wind", and "season"
 
 9.  The purpose of normalizing data is to ensure that features contribute equally to model performance by transforming them into a common scale.
 
-10. "drop_na(data)" and "mutate(df, x = if_else(is.na(x), mean(x, na.rm = TRUE), x))" can be used to impute missing values with the mean
+10. "drop_na(data)" and "mutate(df, x = if_else(is.na(x), mean(x, na.rm = TRUE), x))" can be used to impute missing values with the mean. I used the mutate option to replace NA values with the mean of the column.
+```{r}
+airquality <- 
+  mutate(airquality, Solar.R = if_else(is.na(Solar.R), mean(Solar.R, na.rm = TRUE), Solar.R))
+```
+```{r}
+airquality <- 
+  mutate(airquality, Ozone = if_else(is.na(Ozone), mean(Ozone, na.rm = TRUE), Ozone))
+```
+```{r}
+
+airquality$Solar.R <- as.numeric(airquality$Solar.R)
+airquality$Ozone <- as.numeric(airquality$Ozone)
+
+```
 
     ```{r}
     prep_recipe <- prep(recipe_airquality, training = airquality)
