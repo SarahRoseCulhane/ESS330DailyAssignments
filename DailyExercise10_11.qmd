@@ -30,12 +30,12 @@ shapiro.test(airquality$Wind)
 
 4\. The null hypothesis for the test is that data is normally distributed and the alternative hypothesis is that it is not normally distributed.
 
-5\. The P-values are low for the variables wind and temp but high for the variables ozone and solar .R. This means that for the variables wind and temp most of the data points are clustered around the mean.
+5\. The P-values are low for the variables wind and temp but high for the variables ozone and solar .R. This means that for the variables wind and temp most of the data points are clustered around the mean and are normally distributed for those variables but not for ozone and solar .R.
 
 # Question 2: **Data Transformation and Feature Engineering**
 
 ```{r}
-airquality_seasons <- airquality %>%
+airquality <- airquality %>%
   mutate(season = case_when(
     Month %in% c("11", "12", "1") ~ "Winter",
     Month %in% c("2", "3", "4") ~ "Spring",
@@ -52,38 +52,40 @@ airquality_seasons <- airquality %>%
 
 7.  There are 61 observations from fall and 92 observations from summer but none from winter and spring.
 
-    # Question 3:  Data Preprocessing
+    # Question 3: Data Preprocessing
 
     ```{r}
     library(tidymodels)
-    recipe_airquality <- airquality_seasons %>%
-      recipe(~ Temp + Solar.R + Wind + season) %>%
+    recipe_airquality <- airquality %>%
+      recipe(Ozone ~ Temp + Solar.R + Wind + season) %>%
       step_normalize(all_numeric_predictors()) %>%
-      step_impute_mean(all_numeric_predictors())
-
+      step_impute_mean(all_predictors()) 
+     
 
     ```
 
 8.  I used the code above to normalize the predictor variables "Temp", "solar .R", "Wind", and "season"
 
-9.   The purpose of normalizing data is to ensure that features contribute equally to model performance by transforming them into a common scale.
+9.  The purpose of normalizing data is to ensure that features contribute equally to model performance by transforming them into a common scale.
 
-10.  "drop_na(data)" and "mutate(df, x = if_else(is.na(x), mean(x, na.rm = TRUE), x))" can be used to impute missing values with the mean
+10. "drop_na(data)" and "mutate(df, x = if_else(is.na(x), mean(x, na.rm = TRUE), x))" can be used to impute missing values with the mean
 
     ```{r}
-    recipe_prep <- prep(recipe_airquality, training = airquality_seasons)
-    normalized_data <- bake(recipe_prep, new_data = airquality_seasons)
-      
+    prep_recipe <- prep(recipe_airquality, training = airquality)
     ```
 
-11. I used the code above to prep and bake the data to generate a processed dataset.
+    ```{r}
+    normalized_data <- bake(prep_recipe, new_data = airquality) 
+    ```
 
-12. It is necessary to prep and bake the data because
+11. I used the code above to prep and bake the data to generate a processed data set.
+
+12. It is necessary to prep and bake the data because prepping estimates any statistics needed for transformation and baking applies those transformations. It ensures that the all the data is in one common form.
 
     # Part 4: Building a Linear Regression Model
 
     ```{r}
-    model = lm(Ozone ~ . , data = airquality_seasons)
+    model = lm(Ozone ~ . , data = airquality)
     ```
 
 13. I used the code above to fit a linear model using ozone as the response variable and all other variables as predictors.
@@ -91,5 +93,54 @@ airquality_seasons <- airquality %>%
 14. The coefficient tells us the effect that the predictor variable has ozone. If the coefficient for a predictor variable is positive, it means as that variable increases so does ozone. R-Squared tells us how good of a fit the model is to the data set. If the R-squared is low, the model explains the variance in the response variable well. P-values tell us if a variable is significant in explaining ozone.
 
     ```{r}
-    augmented_data <- augment(model, data = airquality_seasons)
+    augmented_data <- augment(model, data = airquality)
     ```
+
+15. I used the code above to supplement the normalized data.frame with the fitted values and residuals using broom::augument.
+
+    ```{r}
+    library(ggplot2)
+
+    residuals <- augmented_data$.resid
+
+    histogram_plot <- ggplot(augmented_data, aes(x = .resid)) +
+      geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+      theme_minimal() +
+      labs(title = "Histogram of Residuals", x = "Residuals", y = "Frequency")
+
+    qqplot <- ggplot(augmented_data, aes(sample = .resid)) +
+      geom_qq() +
+      geom_qq_line() +
+      theme_minimal() +
+      labs(title = "QQ Plot of Residuals")
+
+    histogram_plot
+    ```
+
+```{r}
+qqplot
+```
+
+I used the code above to extract the residuals and visualize their distribution as a histogram and qqplot.
+
+```{r}
+library(ggpubr)
+ggarrange(histogram_plot, qqplot, ncol = 2, nrow = 1)
+```
+
+17.  I used the code above to plot the histogram and scatterplot as one image. I interpret from these images that the data is not normally distributed, so the model may not be accurately capturing the data.
+
+    ```{r}
+    library(ggpubr)
+
+    ggscatter(augmented_data, x = "Ozone", y = ".fitted",
+              add = "reg.line", conf.int = TRUE,
+              cor.coef = TRUE, cor.method = "spearman",
+              ellipse = TRUE) +
+      labs(title = "Actual vs. Predicted Ozone")
+
+    ```
+
+18. I used the code above to create a scatter plot of the actual vs predicted values using ggpubr.
+
+19. This is not a strong model. The residuals are not normally distributed and there is a relatively strong linear correlation between actual and predicted variables in the middle of the scattterplot but it tapers off in the end.
