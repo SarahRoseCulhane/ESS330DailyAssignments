@@ -1,0 +1,95 @@
+---
+title: "assignment 11/4"
+author: "Sarah Culhane"
+date: "3/10/2025"
+format:
+ html:
+  self-contained: true
+---
+
+## Part 1: Normality Testing
+
+```{r}
+library(tidyverse)
+data("airquality")
+head(airquality)
+```
+
+1\. The "airquality" dataset has 6 columns named "Ozone", "Solar .R", "Wind", and "Temp", "Month", and "day". The structure of the dataset is a 153 x 6 table.
+
+```{r}
+shapiro.test(airquality$Ozone)
+shapiro.test(airquality$Temp)
+shapiro.test(airquality$Solar.R)
+shapiro.test(airquality$Wind)
+```
+
+2\. I used the code above to perform the Shapiro-Wilk normality test on the following variables: Ozone, Temp, Solar .R, and Wind.
+
+3\. The purpose of the Shapiro-Wilk test is to test if data is normally distributed. If the p-value is low, it probably not normal distributed.
+
+4\. The null hypothesis for the test is that data is normally distributed and the alternative hypothesis is that it is not normally distributed.
+
+5\. The P-values are low for the variables wind and temp but high for the variables ozone and solar .R. This means that for the variables wind and temp most of the data points are clustered around the mean.
+
+# Question 2: **Data Transformation and Feature Engineering**
+
+```{r}
+airquality_seasons <- airquality %>%
+  mutate(season = case_when(
+    Month %in% c("11", "12", "1") ~ "Winter",
+    Month %in% c("2", "3", "4") ~ "Spring",
+    Month %in% c("5", "6", "7") ~ "Summer",
+    Month %in% c("8", "9", "10") ~ "Fall"
+  ))
+```
+
+6.  I used the code above to translate the months into 4 seasons.
+
+    ```{r}
+    table(airquality_seasons$season)
+    ```
+
+7.  There are 61 observations from fall and 92 observations from summer but none from winter and spring.
+
+    # Question 3:  Data Preprocessing
+
+    ```{r}
+    library(tidymodels)
+    recipe_airquality <- airquality_seasons %>%
+      recipe(~ Temp + Solar.R + Wind + season) %>%
+      step_normalize(all_numeric_predictors()) %>%
+      step_impute_mean(all_numeric_predictors())
+
+
+    ```
+
+8.  I used the code above to normalize the predictor variables "Temp", "solar .R", "Wind", and "season"
+
+9.   The purpose of normalizing data is to ensure that features contribute equally to model performance by transforming them into a common scale.
+
+10.  "drop_na(data)" and "mutate(df, x = if_else(is.na(x), mean(x, na.rm = TRUE), x))" can be used to impute missing values with the mean
+
+    ```{r}
+    recipe_prep <- prep(recipe_airquality, training = airquality_seasons)
+    normalized_data <- bake(recipe_prep, new_data = airquality_seasons)
+      
+    ```
+
+11. I used the code above to prep and bake the data to generate a processed dataset.
+
+12. It is necessary to prep and bake the data because
+
+    # Part 4: Building a Linear Regression Model
+
+    ```{r}
+    model = lm(Ozone ~ . , data = airquality_seasons)
+    ```
+
+13. I used the code above to fit a linear model using ozone as the response variable and all other variables as predictors.
+
+14. The coefficient tells us the effect that the predictor variable has ozone. If the coefficient for a predictor variable is positive, it means as that variable increases so does ozone. R-Squared tells us how good of a fit the model is to the data set. If the R-squared is low, the model explains the variance in the response variable well. P-values tell us if a variable is significant in explaining ozone.
+
+    ```{r}
+    augmented_data <- augment(model, data = airquality_seasons)
+    ```
