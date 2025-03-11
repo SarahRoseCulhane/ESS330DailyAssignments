@@ -47,10 +47,10 @@ airquality <- airquality %>%
 6.  I used the code above to translate the months into 4 seasons.
 
     ```{r}
-    table(airquality_seasons$season)
+    table(airquality$season)
     ```
 
-7.  There are 61 observations from fall and 92 observations from summer but none from winter and spring.
+7.  There are 52 observations from fall and 59 observations from summer but none from winter and spring.
 
     # Question 3: Data Preprocessing
 
@@ -58,8 +58,7 @@ airquality <- airquality %>%
     library(tidymodels)
     recipe_airquality <- airquality %>%
       recipe(Ozone ~ Temp + Solar.R + Wind + season) %>%
-      step_normalize(all_numeric_predictors()) %>%
-      step_impute_mean(all_predictors()) 
+      step_normalize(all_numeric_predictors()) 
      
 
     ```
