@@ -7,4 +7,54 @@ format:
     self-contained: true
   
 ---
+First, I downloaded the appropriate files using the code from lecture. I could not get the code to work by just copy and pasting it so I had to make some tweaks.
+```{r}
+library(dataRetrieval)
+library(dplyr)
+library(lubridate)
 
+# Example: Cache la Poudre River at Mouth (USGS site 06752260)
+poudre_flow <- readNWISdv(siteNumber = "06752260",    # Download data from USGS for site 06752260
+                          parameterCd = "00060",      # Parameter code 00060 = discharge in cfs)
+                          startDate = "2013-01-01",   # Set the start date
+                          endDate = "2023-12-31") |>  # Set the end date
+  renameNWISColumns() |>                              # Rename columns to standard names (e.g., "Flow", "Date")
+  mutate(YearMonth = format(Date, "%Y-%m")) |>                   # Convert daily Date values into a year-month format (e.g., "2023 Jan")
+  group_by(YearMonth) |>                                   # Group the data by the new monthly Date
+  summarise(mean_flow = mean(Flow, na.rm = TRUE))                       # Calculate the average daily flow for each month
+```
+1. convert to tsibble
+
+```{r}
+# Load packages
+library(tsibble)
+library(feasts)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+```
+First, I loaded the necessary packages
+
+```{r}
+# Load libraries
+library(dataRetrieval)
+library(dplyr)
+library(tsibble)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(feasts)
+
+# Step 2: Clean and rename using dataRetrieval
+poudre_flow <- renameNWISColumns(poudre_flow)
+
+# Step 3: Aggregate to monthly and convert to tsibble
+monthly_flow <- poudre_flow |>
+  mutate(YearMonth = yearmonth(Date)) |>              # Converts to year-month class
+  group_by(YearMonth) |>
+  summarise(Flow = mean(Flow, na.rm = TRUE)) |>
+  ungroup() |> 
+  as_tsibble(index = YearMonth)
+
+```
+Then, I coverted to tsibble using the code above

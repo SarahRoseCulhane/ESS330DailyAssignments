@@ -1,5 +1,6 @@
 ---
 title: "dailyexercise21"
+output-dir: docs
 format: html
 ---
 
