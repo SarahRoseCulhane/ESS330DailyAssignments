@@ -1,5 +1,102 @@
 ---
 title: "dailyassignment22"
-format: html
+output-dir: docs
+type: website
+format:
+  html:
+    self-contained: true
 ---
+First, I downloaded streamflow data for the Poudre River
+
+```{r}
+library(dataRetrieval)
+library(dplyr)
+library(lubridate)
+library(tsibble)
+library(tidymodels)
+library(modeltime)
+
+
+# Example: Cache la Poudre River at Mouth (USGS site 06752260)
+poudre_flow <- readNWISdv(siteNumber = "06752260",    # Download data from USGS for site 06752260
+                          parameterCd = "00060",      # Parameter code 00060 = discharge in cfs)
+                          startDate = "2013-01-01",   # Set the start date
+                          endDate = "2023-12-31") |>  # Set the end date
+  renameNWISColumns() |>                              # Rename columns to standard names (e.g., "Flow", "Date")
+  mutate(Date = yearmonth(Date)) |>                   # Convert daily Date values into a year-month format (e.g., "2023 Jan")
+  group_by(Date) |>                                   # Group the data by the new monthly Date
+  summarise(Flow = mean(Flow))                       # Calculate the average daily flow for each month
+```
+
+
+```{r}
+# Convert to data frame with Date as class 'Date' for compatibility
+poudre_df <- poudre_flow |>
+  mutate(Date = as.Date(Date))
+
+# Split into training and future dataset
+train_df <- poudre_df |>
+  filter(Date < as.Date("2023-01-01"))
+
+future_df <- poudre_df |>
+  filter(Date >= as.Date("2023-01-01"))
+
+# create a prophet model for forecasting
+model_prophet <- prophet_reg() |>
+  set_engine("prophet") |>
+  fit(Flow ~ Date, data = train_df)
+
+# create an ARIMA model for forecasting
+model_arima <- arima_reg() |>
+  set_engine("auto_arima") |>
+  fit(Flow ~ Date, data = train_df)
+
+# Combine models into a modeltime table
+models_tbl <- modeltime_table(
+  model_prophet,
+  model_arima
+)
+
+# forecast the next 12 months
+forecast_tbl <- models_tbl |>
+  modeltime_forecast(
+    new_data = future_df,
+    actual_data = train_df
+  )
+```
+
+I used the code above to forecast the next 12 months of streamflow data in the Poudre River based on last time assignment.
+```{r}
+# Use Prophet predictions
+predicted_df <- forecast_tbl |>
+  filter(.model_desc == "PROPHET") |>
+  select(Date = .index, Predicted = .value)
+
+# Join with observed
+comparison_df <- predicted_df |>
+  left_join(future_df, by = "Date") |>
+  rename(Observed = Flow) |>
+  drop_na()
+
+r2_model <- lm(Observed ~ Predicted, data = comparison_df)
+r2_value <- summary(r2_model)$r.squared
+r2_value
+
+```
+I used the code above to Compute the R2 value between the model predictions and the observed data using a linear model. The R2 value tells us how well a regression model predicts the outcome of a dependent variable. The reported value is fairly high but not as high as other values that have been reported using this dataset, which tellms me that while it is a decent fit it could be better.
+
+```{r}
+ggplot(comparison_df, aes(x = Observed, y = Predicted)) +
+  geom_point(color = "green", size = 3) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(
+    title = "Predicted vs Observed Monthly Streamflow",
+    subtitle = paste0("R² = ", round(r2_value, 3)),
+    x = "Observed Flow",
+    y = "Predicted Flow"
+  ) +
+  theme_minimal()
+```
+I used the code above to generate a plot of the Predicted vs Observed values and include a 1:1 line, and a linear model line.
 
