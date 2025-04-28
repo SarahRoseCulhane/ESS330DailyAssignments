@@ -6,6 +6,7 @@ format:
   html:
     self-contained: true
 ---
+
 First, I downloaded streamflow data for the Poudre River
 
 ```{r}
@@ -28,12 +29,11 @@ poudre_flow <- readNWISdv(siteNumber = "06752260",    # Download data from USGS 
   summarise(Flow = mean(Flow))                       # Calculate the average daily flow for each month
 ```
 
-
 ```{r}
 # Convert to data frame with Date as class 'Date' for compatibility
 poudre_df <- poudre_flow |>
   mutate(Date = as.Date(Date))
-
+l
 # Split into training and future dataset
 train_df <- poudre_df |>
   filter(Date < as.Date("2023-01-01"))
@@ -66,6 +66,7 @@ forecast_tbl <- models_tbl |>
 ```
 
 I used the code above to forecast the next 12 months of streamflow data in the Poudre River based on last time assignment.
+
 ```{r}
 # Use Prophet predictions
 predicted_df <- forecast_tbl |>
@@ -83,6 +84,7 @@ r2_value <- summary(r2_model)$r.squared
 r2_value
 
 ```
+
 I used the code above to Compute the R2 value between the model predictions and the observed data using a linear model. The R2 value tells us how well a regression model predicts the outcome of a dependent variable. The reported value is fairly high but not as high as other values that have been reported using this dataset, which tellms me that while it is a decent fit it could be better.
 
 ```{r}
@@ -98,5 +100,5 @@ ggplot(comparison_df, aes(x = Observed, y = Predicted)) +
   ) +
   theme_minimal()
 ```
-I used the code above to generate a plot of the Predicted vs Observed values and include a 1:1 line, and a linear model line.
 
+I used the code above to generate a plot of the Predicted vs Observed values and include a 1:1 line, and a linear model line.
