@@ -2,6 +2,7 @@
 title: "dailyassighnment25"
 format: html
 ---
+
 ```{r}
 library(sf)
 library(tidyverse)
@@ -112,109 +113,48 @@ final_map <- ggplot(intersecting_counties) +
 
 ```
 
-library(sf)
-library(tidyverse)
-library(units)
-library(AOI)
-library(gghighlight)
-library(ggrepel)
-library(knitr)
+library(sf) library(tidyverse) library(units) library(AOI) library(gghighlight) library(ggrepel) library(knitr)
 
-major_rivers <- read_sf("MajorRivers.shp")
+major_rivers \<- read_sf("MajorRivers.shp")
 
-#Filter it to include only the Mississippi River system
-library(dplyr)
-mississippi_river <- major_rivers |>
-  filter(NAME == "Mississippi")
+#Filter it to include only the Mississippi River system library(dplyr) mississippi_river \<- major_rivers \|\> filter(NAME == "Mississippi")
 
-#Use AOI::aoi_get() to get the county boundaries for all counties in CONUS.
-remotes::install_github("mikejohnson51/AOI")
-remotes::install_github("ropensci/USAboundaries")
-remotes::install_github("ropensci/USAboundariesData")
-remotes::install_github("ropenscilabs/rnaturalearthdata")
+#Use AOI::aoi_get() to get the county boundaries for all counties in CONUS. remotes::install_github("mikejohnson51/AOI") remotes::install_github("ropensci/USAboundaries") remotes::install_github("ropensci/USAboundariesData") remotes::install_github("ropenscilabs/rnaturalearthdata")
 
-library(USAboundaries)
-library(USAboundariesData)
+library(USAboundaries) library(USAboundariesData)
 
-ms_counties <- us_counties(states = "Mississippi", resolution = "low")
-plot(st_geometry(ms_counties))
+ms_counties \<- us_counties(states = "Mississippi", resolution = "low") plot(st_geometry(ms_counties))
 
-#Use st_filter to identify the counties that intersect the Mississippi River system
-# Ensure both layers use the same CRS
-counties <- st_transform(ms_counties, crs = st_crs(mississippi_river))
+#Use st_filter to identify the counties that intersect the Mississippi River system \# Ensure both layers use the same CRS counties \<- st_transform(ms_counties, crs = st_crs(mississippi_river))
 
 # Drop the second "state_name" column
-counties <- counties[, !duplicated(colnames(counties))]
 
-mississippi_river <- mississippi_river %>%
-  rename(geom = geometry) %>% 
-  rename(nm = NAME)
+counties \<- counties\[, !duplicated(colnames(counties))\]
 
-colnames(counties)
-colnames(mississippi_river)
+mississippi_river \<- mississippi_river %\>% rename(geom = geometry) %\>% rename(nm = NAME)
+
+colnames(counties) colnames(mississippi_river)
 
 # Find counties that intersect the river
-intersecting_counties <- st_filter(counties, mississippi_river, .predicate = st_intersects)
-plot(st_geometry(intersecting_counties))
 
-#Make a map of the counties that intersect the Mississippi River system, along with the rivers themselves.
-mississippi_river <- st_transform(mississippi_river, st_crs(counties))
-intersecting_counties <- st_filter(counties, mississippi_river, .predicate = st_intersects)
+intersecting_counties \<- st_filter(counties, mississippi_river, .predicate = st_intersects) plot(st_geometry(intersecting_counties))
+
+#Make a map of the counties that intersect the Mississippi River system, along with the rivers themselves. mississippi_river \<- st_transform(mississippi_river, st_crs(counties)) intersecting_counties \<- st_filter(counties, mississippi_river, .predicate = st_intersects)
 
 # Plot counties intersecting the river + the river system
-ggplot() +
-  geom_sf(data = counties, fill = "gray90", color = "white", size = 0.1) +  # base map of all counties
-  geom_sf(data = intersecting_counties, fill = "orange", color = "black", size = 0.2) +  # highlight intersecting counties
-  geom_sf(data = mississippi_river, color = "blue", size = 0.6) +  # Mississippi River
-  labs(title = "Counties Intersecting the Mississippi River System",
-       caption = "Data: AOI + USAboundaries + River dataset") +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 16, face = "bold"),
-    plot.caption = element_text(size = 9)
-  )
 
-#Read in the city data from last assignment/lab and ensure they are a sf object in the correct CRS
-cities <- readr::read_csv("uscities_copy.csv", show_col_types = FALSE) |>
-  st_as_sf(coords = c("lng", "lat"), crs = 4326) |>
-  st_transform(eqdc)
+ggplot() + geom_sf(data = counties, fill = "gray90", color = "white", size = 0.1) + \# base map of all counties geom_sf(data = intersecting_counties, fill = "orange", color = "black", size = 0.2) + \# highlight intersecting counties geom_sf(data = mississippi_river, color = "blue", size = 0.6) + \# Mississippi River labs(title = "Counties Intersecting the Mississippi River System", caption = "Data: AOI + USAboundaries + River dataset") + theme_minimal() + theme( plot.title = element_text(size = 16, face = "bold"), plot.caption = element_text(size = 9) )
 
-#Use st_join to identify the cities that intersect the counties that intersect the Mississippi River system
-cities <- st_transform(cities, st_crs(intersecting_counties))
-mississippi_cities <- st_join(cities, intersecting_counties, join = st_intersects, left = FALSE)
-print(mississippi_cities)
+#Read in the city data from last assignment/lab and ensure they are a sf object in the correct CRS cities \<- readr::read_csv("uscities_copy.csv", show_col_types = FALSE) \|\> st_as_sf(coords = c("lng", "lat"), crs = 4326) \|\> st_transform(eqdc)
 
+#Use st_join to identify the cities that intersect the counties that intersect the Mississippi River system cities \<- st_transform(cities, st_crs(intersecting_counties)) mississippi_cities \<- st_join(cities, intersecting_counties, join = st_intersects, left = FALSE) print(mississippi_cities)
 
-#Calculate the total urban population in each county by summing the population of the cities within each county that intesects the Mississippi River system.
-urban_pop_by_county <- mississippi_cities %>%
-  st_drop_geometry() %>%  # drop geometry to simplify
-  group_by(geoid) %>%     # use the county's GEOID or another unique ID
-  summarize(total_urban_population = sum(population, na.rm = TRUE))
+#Calculate the total urban population in each county by summing the population of the cities within each county that intesects the Mississippi River system. urban_pop_by_county \<- mississippi_cities %\>% st_drop_geometry() %\>% \# drop geometry to simplify group_by(geoid) %\>% \# use the county's GEOID or another unique ID summarize(total_urban_population = sum(population, na.rm = TRUE))
 
-intersecting_counties <- intersecting_counties %>%
-  left_join(urban_pop_by_county, by = "geoid")
+intersecting_counties \<- intersecting_counties %\>% left_join(urban_pop_by_county, by = "geoid")
 
-ggplot(intersecting_counties) +
-  geom_sf(aes(fill = total_urban_population)) +
-  scale_fill_viridis_c(option = "plasma", na.value = "gray90") +
-  labs(title = "Urban Population by County Along Mississippi River System",
-       fill = "Urban Population") +
-  theme_minimal()
+ggplot(intersecting_counties) + geom_sf(aes(fill = total_urban_population)) + scale_fill_viridis_c(option = "plasma", na.value = "gray90") + labs(title = "Urban Population by County Along Mississippi River System", fill = "Urban Population") + theme_minimal()
 
-#Add this data to the subset of intersecting counties and use it to color you map using scale_*
-library(ggplot2)
+#Add this data to the subset of intersecting counties and use it to color you map using scale\_\* library(ggplot2)
 
-ggplot(intersecting_counties) +
-  geom_sf(aes(fill = total_urban_population)) +
-  geom_sf(data = mississippi_river, color = "blue", size = 0.6) +  # Mississippi River
-  scale_fill_viridis_c(
-    option = "plasma",   # or "plasma", "cividis", "inferno"
-    trans = "log",      # optional: log-transform to handle skew
-    na.value = "grey90"
-  ) +
-  labs(
-    title = "County Population Near Mississippi River",
-    fill = "Urban Population"
-  ) +
-  theme_minimal()
-
+ggplot(intersecting_counties) + geom_sf(aes(fill = total_urban_population)) + geom_sf(data = mississippi_river, color = "blue", size = 0.6) + \# Mississippi River scale_fill_viridis_c( option = "plasma", \# or "plasma", "cividis", "inferno" trans = "log", \# optional: log-transform to handle skew na.value = "grey90" ) + labs( title = "County Population Near Mississippi River", fill = "Urban Population" ) + theme_minimal()
