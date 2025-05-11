@@ -56,7 +56,7 @@ I used the code above to read in the DEM file from the lynker-spatial S3 bucket 
 Extract River Profile
 
 ```{r}
-poudre_pts_utm <- st_transform(poudre_pts, crs = crs(elev))
+poudre_pts_utm <- st_transform(poudre_pts, crs = crs(elevation))
 poudre_utm <- st_transform(poudre_merged_sf, crs = 26913)
 
 poudre_vect <- vect(poudre_pts_utm)
